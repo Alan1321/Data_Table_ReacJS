@@ -6,9 +6,10 @@ import AuthContext from './store/auth-context';
 
 const App = () =>{
   
-  const [data1, setData1] = useState([])
+  const [data1, setData1] = useState([{name:'alan'}])
   const [data2, setData2] = useState([])
   const [id, setId] = useState({"request_id": "1HRUq2kEQQ"})
+  const [recheckstatus, setRecheckStatus] = useState(true)
 
   const get_status = `https://n9uowbutv1.execute-api.us-east-1.amazonaws.com/default/get_status`
   var ids = {"request_id": ["1HRUq2kEQQ", "bjAwLPMPwd", "dk00foKRqP", "DB27ynegt9", "NSYq1WYfKM", "FAMB8rfpne"]}
@@ -18,22 +19,50 @@ const App = () =>{
 
   useEffect(()=>{
     fetchHandler()
-  },[])
+    //console.log('im inside useeffect1')
+    if(recheckstatus === true){
+      //console.log('im inside rechecked status')
+      const timer = setInterval(()=>{
+        fetchHandler()
+        //console.log('im insdie timer')
+        //console.log(data1.length)
+        let timeragain = false
+        for(let i = 0;i<data1.length;i++){
+          //console.log('im inside loop')
+          if(data1[i].status !== 'success'){
+            //console.log('im inside of success')
+            timeragain = true
+            setRecheckStatus(true)
+          }
+          //console.log('hello world')
+        }
+        if(!timeragain){
+          clearInterval(timer)
+        }
+      },5000)
+      //console.log('im outside timer')
+    }
+
+  },[recheckstatus])
 
   useEffect(()=>{
       fetchHandler2()
   },[id])
 
   async function fetchHandler(){
-
+      console.log('im inside fetchhandler1')
       const response = await fetch(get_status,{
           method:'POST',
           body:JSON.stringify(ids)
       })
       let datas = await response.json()
+      console.log('hello im in fetchhandler')
+      //console.log(datas)
       setData1(datas)
       //console.log('im in handler1 in app', data1)
   }
+  
+  //console.log(data1)
 
   async function fetchHandler2(){
       const response = await fetch(get_result,{
