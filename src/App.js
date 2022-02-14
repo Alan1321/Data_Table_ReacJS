@@ -7,7 +7,7 @@ import AuthContext from './store/auth-context';
 const App = () =>{
   
   console.log('im in app top')
-  const [data1, setData1] = useState([{}])
+  const [data1, setData1] = useState([{dataset:"waiting for data",message:'waiting for data'}])
   const [data2, setData2] = useState([])
   const [id, setId] = useState({"request_id": "1HRUq2kEQQ"})
   const [recheckstatus, setRecheckStatus] = useState(true)
@@ -21,10 +21,11 @@ const App = () =>{
   useEffect(()=>{
     console.log('hello world')
     localStorage.setItem('ids', JSON.stringify(ids))
+    fetchHandler()
   },[])
 
   useEffect(()=>{
-    fetchHandler()
+    //fetchHandler()
     console.log('im inside useeffect1')
     if(recheckstatus === true){
       //console.log('im inside rechecked status')
@@ -40,11 +41,12 @@ const App = () =>{
             console.log(data1)
             console.log(data1[i].status)
             timeragain = true
-            setRecheckStatus(true)
+            //setRecheckStatus(true)
           }
           //console.log('hello world')
         }
         if(!timeragain){
+          setRecheckStatus(false)
           clearInterval(timer)
         }
       },5000)
@@ -128,18 +130,18 @@ const App = () =>{
     }
   }
 
-  const idChangeHandler = (event) =>{
-      //var id = {"request_id": "1HRUq2kEQQ"}
-      let full_id = {"request_id":event.target.value}
-      //console.log(full_id);
-      setId(full_id)
-  }
+  // const idChangeHandler = (event) =>{
+  //     //var id = {"request_id": "1HRUq2kEQQ"}
+  //     let full_id = {"request_id":event.target.value}
+  //     //console.log(full_id);
+  //     setId(full_id)
+  // }
 
   return(
       <AuthContext.Provider 
         value={{
           onmethod: secondlinkDeleteHandler,
-          idChange:idChangeHandler,
+          //idChange:idChangeHandler,
           onFirstLinkRowDelete:firstlinkRowDeleteHandler,
           data:data2
         }}
