@@ -18,32 +18,37 @@ const App = () =>{
   // var id = {"request_id": "1HRUq2kEQQ"}
 
   useEffect(()=>{
+    localStorage.setItem('ids', JSON.stringify(ids))
+  },[])
+
+  useEffect(()=>{
     fetchHandler()
     //console.log('im inside useeffect1')
-    if(recheckstatus === true){
-      //console.log('im inside rechecked status')
-      const timer = setInterval(()=>{
-        fetchHandler()
-        //console.log('im insdie timer')
-        //console.log(data1.length)
-        let timeragain = false
-        for(let i = 0;i<data1.length;i++){
-          //console.log('im inside loop')
-          if(data1[i].status !== 'success'){
-            //console.log('im inside of success')
-            timeragain = true
-            setRecheckStatus(true)
-          }
-          //console.log('hello world')
-        }
-        if(!timeragain){
-          clearInterval(timer)
-        }
-      },5000)
+    // if(recheckstatus === true){
+    //   //console.log('im inside rechecked status')
+    //   const timer = setInterval(()=>{
+    //     fetchHandler()
+    //     //console.log('im insdie timer')
+    //     //console.log(data1.length)
+    //     let timeragain = false
+    //     for(let i = 0;i<data1.length;i++){
+    //       //console.log('im inside loop')
+    //       if(data1[i].status !== 'success'){
+    //         //console.log('im inside of success')
+    //         timeragain = true
+    //         setRecheckStatus(true)
+    //       }
+    //       //console.log('hello world')
+    //     }
+    //     if(!timeragain){
+    //       clearInterval(timer)
+    //     }
+    //   },5000)
       //console.log('im outside timer')
-    }
+    //}
 
-  },[recheckstatus])
+  },[])
+  //,[recheckstatus])
 
   useEffect(()=>{
       fetchHandler2()
@@ -51,6 +56,7 @@ const App = () =>{
 
   async function fetchHandler(){
       console.log('im inside fetchhandler1')
+      ids = localStorage.getItem('ids')
       const response = await fetch(get_status,{
           method:'POST',
           body:JSON.stringify(ids)
@@ -96,6 +102,7 @@ const App = () =>{
 
   const firstlinkRowDeleteHandler = (event) =>{
     if(event.target.value){
+      var local_storage_arr = JSON.stringify(localStorage.getItem('ids')).request_id
       let json_value = JSON.parse(event.target.value)
       console.log(json_value)
       let keys = []
@@ -109,8 +116,9 @@ const App = () =>{
 
       for(let i = 0;i<keys.length;i++){
         console.log(data1_duplicate.splice(keys_reversed[i], 1))
+        console.log(local_storage_arr.splice(keys_reversed[i],1))
       }
-      //console.log(data2_duplicate)
+      //ids = localStorage.setItem('ids',JSON.stringify({request_id:local_storage_arr}))
       setData1(data1_duplicate)
     }
   }
