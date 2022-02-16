@@ -2,7 +2,7 @@ import React , {useEffect, useState, useRef, useLayoutEffect} from 'react'
 import  {Route, Link} from 'react-router-dom';
 import Firstlink from './components/Firstlink'
 import Secondlink from './components/SecondLink';
-import AuthContext from './store/auth-context';
+import DataContext from './store/data-context';
 import useInterval from './useInterval';
 
 const App = () =>{
@@ -102,7 +102,7 @@ const App = () =>{
   }
 
   return(
-      <AuthContext.Provider 
+      <DataContext.Provider 
         value={{
           onmethod: secondlinkDeleteHandler,
           idChange:idChangeHandler,
@@ -116,7 +116,7 @@ const App = () =>{
         <Route path='/Secondlink/:id'>
           <Secondlink data={data2}></Secondlink>
         </Route>
-      </AuthContext.Provider>
+      </DataContext.Provider>
 
   )
 }

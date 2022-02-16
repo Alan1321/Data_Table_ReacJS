@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useTable, usePagination, useRowSelect } from 'react-table'
 import React, {useEffect, useState, useContext} from 'react'
 import {Link, useParams} from 'react-router-dom'
-import AuthContext from '../store/auth-context'
+import DataContext from '../store/data-context'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -52,7 +52,7 @@ const IndeterminateCheckbox = React.forwardRef(
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
   const [id_to_delete, set_id_to_delete] = useState([])
-  const ctx = useContext(AuthContext);
+  const ctx = useContext(DataContext);
 
   const {
     getTableProps,
@@ -218,7 +218,7 @@ function Secondlink(props) {
 
     
   const params = useParams();
-  const ctx = useContext(AuthContext);
+  const ctx = useContext(DataContext);
 
   let init_data = []
   if(ctx.data.length !== 0){

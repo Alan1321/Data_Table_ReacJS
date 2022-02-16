@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useTable, usePagination, useRowSelect } from 'react-table'
 import React, {useState, useEffect,useContext} from 'react'
 import {Link} from 'react-router-dom'
-import AuthContext from '../store/auth-context'
+import DataContext from '../store/data-context'
 
 const Styles = styled.div`
   padding: 1rem;
@@ -51,7 +51,7 @@ const IndeterminateCheckbox = React.forwardRef(
 
 function Table({ columns, data }) {
   // Use the state and functions returned from useTable to build your UI
-  const ctx = useContext(AuthContext);
+  const ctx = useContext(DataContext);
   const {
     getTableProps,
     getTableBodyProps,
@@ -213,7 +213,7 @@ function Table({ columns, data }) {
 
 function Firstlink(props) {
 
-    const ctx = useContext(AuthContext)
+    const ctx = useContext(DataContext)
 
     let datas = []
 
