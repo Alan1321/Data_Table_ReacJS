@@ -1,8 +1,9 @@
-import React , {useEffect, useState} from 'react'
+import React , {useEffect, useState, useRef, useLayoutEffect} from 'react'
 import  {Route, Link} from 'react-router-dom';
 import Firstlink from './components/Firstlink'
 import Secondlink from './components/SecondLink';
 import AuthContext from './store/auth-context';
+import useInterval from './useInterval';
 
 const App = () =>{
   
@@ -10,7 +11,7 @@ const App = () =>{
   const [data1, setData1] = useState([{dataset:"waiting for data",message:'waiting for data'}])
   const [data2, setData2] = useState([])
   const [id, setId] = useState({"request_id": "1HRUq2kEQQ"})
-  const [recheckstatus, setRecheckStatus] = useState(true)
+  const [delayTime, setDelayTime] = useState(5000)
 
   const get_status = `https://n9uowbutv1.execute-api.us-east-1.amazonaws.com/default/get_status`
   var ids = {"request_id": ["1HRUq2kEQQ", "bjAwLPMPwd", "dk00foKRqP", "DB27ynegt9", "NSYq1WYfKM", "FAMB8rfpne"]}
@@ -19,62 +20,35 @@ const App = () =>{
   // var id = {"request_id": "1HRUq2kEQQ"}
 
   useEffect(()=>{
-    console.log('hello world')
     localStorage.setItem('ids', JSON.stringify(ids))
     fetchHandler()
   },[])
 
-  useEffect(()=>{
-    //fetchHandler()
-    console.log('im inside useeffect1')
-    if(recheckstatus === true){
-      //console.log('im inside rechecked status')
-      const timer = setInterval(()=>{
-        fetchHandler()
-        //console.log('im insdie timer')
-        console.log(data1.length)
-        let timeragain = false
-        for(let i = 0;i<data1.length;i++){
-          //console.log('im inside loop')
-          if(data1[i].status !== 'success'){
-            console.log(data1.length)
-            console.log(data1)
-            console.log(data1[i].status)
-            timeragain = true
-            //setRecheckStatus(true)
-          }
-          //console.log('hello world')
-        }
-        if(!timeragain){
-          setRecheckStatus(false)
-          clearInterval(timer)
-        }
-      },5000)
-      console.log('im outside timer')
+  useInterval(()=>{
+    console.log("im in useInterval")
+    fetchHandler();
+    let waiting = false;
+    for(let i = 0;i<data1.length;i++){
+      if(data1[i].status !== 'success'){
+        waiting = true;
+      }
     }
-
-  },[recheckstatus])
+    if(!waiting) setDelayTime(null)
+  },delayTime)
 
   useEffect(()=>{
       fetchHandler2()
   },[id])
 
   async function fetchHandler(){
-      console.log('im inside fetchhandler1')
       ids = localStorage.getItem('ids')
-      console.log(ids)
       const response = await fetch(get_status,{
           method:'POST',
           body:ids
       })
       let datas = await response.json()
-      console.log('hello im in fetchhandler')
-      console.log(datas)
       setData1(datas)
-      //console.log('im in handler1 in app', data1)
   }
-  
-  //console.log(data1)
 
   async function fetchHandler2(){
       const response = await fetch(get_result,{
@@ -83,17 +57,13 @@ const App = () =>{
     })
     let datas = await response.json()
     setData2(datas.result.dataValues)
-    //console.log('im in handler 2 in app', data2)
   }
 
   const secondlinkDeleteHandler = (event) => {
-    //console.log(JSON.parse(event.target.value))
-
     if(event.target.value){
       let keys = []
       Object.entries(JSON.parse(event.target.value)).forEach((entry) => {
         const [key, value] = entry;
-        //console.log(key, value)
         keys.push(parseInt(key));
       });
       let keys_reversed = keys.reverse();
@@ -101,7 +71,6 @@ const App = () =>{
       for(let i = 0;i<keys.length;i++){
         console.log(data2_duplicate.splice(keys_reversed[i], 1))
       }
-      //console.log(data2_duplicate)
       setData2(data2_duplicate)
     }
   }
@@ -109,13 +78,10 @@ const App = () =>{
   const firstlinkRowDeleteHandler = (event) =>{
     if(event.target.value){
       var local_storage_arr = JSON.parse(localStorage.getItem('ids')).request_id
-      console.log(local_storage_arr)
       let json_value = JSON.parse(event.target.value)
-      console.log(json_value)
       let keys = []
       Object.entries(JSON.parse(event.target.value)).forEach((entry) => {
         const [key, value] = entry;
-        //console.log(key, value)
         keys.push(parseInt(key));
       });
       let keys_reversed = keys.reverse();
@@ -130,18 +96,16 @@ const App = () =>{
     }
   }
 
-  // const idChangeHandler = (event) =>{
-  //     //var id = {"request_id": "1HRUq2kEQQ"}
-  //     let full_id = {"request_id":event.target.value}
-  //     //console.log(full_id);
-  //     setId(full_id)
-  // }
+  const idChangeHandler = (event) =>{
+      let full_id = {"request_id":event.target.value}
+      setId(full_id)
+  }
 
   return(
       <AuthContext.Provider 
         value={{
           onmethod: secondlinkDeleteHandler,
-          //idChange:idChangeHandler,
+          idChange:idChangeHandler,
           onFirstLinkRowDelete:firstlinkRowDeleteHandler,
           data:data2
         }}
