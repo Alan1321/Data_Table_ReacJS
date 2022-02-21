@@ -20,7 +20,8 @@ const App = () =>{
   // var id = {"request_id": "1HRUq2kEQQ"}
 
   useEffect(()=>{
-    localStorage.setItem('ids', JSON.stringify(ids))
+    if(localStorage.getItem('ids') === null)
+      localStorage.setItem('ids', JSON.stringify(ids))
     fetchHandler()
   },[])
 
